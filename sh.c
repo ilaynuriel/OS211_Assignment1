@@ -81,13 +81,14 @@ runcmd(struct cmd *cmd)
     for(int i=0; i<10; i++){
         int length = strlen(PATH[i]) + strlen(ecmd->argv[0]);
         char curr_path[length] ;
+        memset(curr_path,0,length);
         int j=0;
         // curr_path = /bin (for example)
         while(PATH[i][j] != 0){
             curr_path[j] = PATH[i][j];
             j++;
         }
-        printf(2,"curr path %s ",curr_path);
+        printf(2,"curr path %s \n",curr_path);
         j++;
         curr_path[j] = '/';
         j++;
@@ -95,7 +96,7 @@ runcmd(struct cmd *cmd)
         for(int k=0; k<strlen(ecmd->argv[0]); k++){
             curr_path[j] = ecmd->argv[0][k];
         }
-        printf(2,"curr path %s ",curr_path);
+        printf(2,"curr path %s \n",curr_path);
         exec(curr_path,ecmd->argv);
     }
     printf(2, "exec %s failed\n", ecmd->argv[0]);
