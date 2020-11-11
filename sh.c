@@ -12,7 +12,7 @@
 #define BACK  5
 
 #define MAXARGS 10
-
+char PATH[10][32];
 struct cmd {
   int type;
 };
@@ -166,10 +166,14 @@ main(void)
     }
     // add for set PATH command
     if(buf[0] == 's' && buf[1] == 'e' && buf[2] == 't' && buf[3] == ' ' && buf[4] == 'P' && buf[5] == 'A' && buf[6] == 'T' && buf[7] == 'H'){
+        for (int m=0;m<10;m++) {
+            //PATH[m] = "";
+            memset(PATH[m],0,32);
+        }
         int i = 9;
         int k = 0;
         while (strlen(buf) > i && buf[i] != '\n'){
-            char new_path[30];
+            char new_path[32] = "";
             int j = 0;
             while(buf[i] != ':' && buf[i] != '\n'){
                 new_path[j] = buf[i];
@@ -182,7 +186,8 @@ main(void)
         }
         for (int m=0;m<10;m++)
             printf(2,"PATH %s \n",PATH[m]);
-      }
+        continue;
+    }
     if(fork1() == 0)
       runcmd(parsecmd(buf));
     wait();
