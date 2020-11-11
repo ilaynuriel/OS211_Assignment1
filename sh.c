@@ -13,6 +13,7 @@
 
 #define MAXARGS 10
 char PATH[10][32];
+
 struct cmd {
   int type;
 };
@@ -76,6 +77,27 @@ runcmd(struct cmd *cmd)
     if(ecmd->argv[0] == 0)
       exit();
     exec(ecmd->argv[0], ecmd->argv);
+    // Check in PATH
+    for(int i=0; i<10; i++){
+        int length = strlen(PATH[i]) + strlen(ecmd->argv[0]);
+        char curr_path[length] ;
+        int j=0;
+        // curr_path = /bin (for example)
+        while(PATH[i][j] != 0){
+            curr_path[j] = PATH[i][j];
+            j++;
+        }
+        printf(2,"curr path %s ",curr_path);
+        j++;
+        curr_path[j] = '/';
+        j++;
+        // curr_path = /bin/ls (for example)
+        for(int k=0; k<strlen(ecmd->argv[0]); k++){
+            curr_path[j] = ecmd->argv[0][k];
+        }
+        printf(2,"curr path %s ",curr_path);
+        exec(curr_path,ecmd->argv);
+    }
     printf(2, "exec %s failed\n", ecmd->argv[0]);
     break;
 
@@ -164,30 +186,30 @@ main(void)
         printf(2, "cannot cd %s\n", buf+3);
       continue;
     }
-    // add for set PATH command
-    if(buf[0] == 's' && buf[1] == 'e' && buf[2] == 't' && buf[3] == ' ' && buf[4] == 'P' && buf[5] == 'A' && buf[6] == 'T' && buf[7] == 'H'){
-        for (int m=0;m<10;m++) {
-            //PATH[m] = "";
-            memset(PATH[m],0,32);
-        }
-        int i = 9;
-        int k = 0;
-        while (strlen(buf) > i && buf[i] != '\n'){
-            char new_path[32] = "";
-            int j = 0;
-            while(buf[i] != ':' && buf[i] != '\n'){
-                new_path[j] = buf[i];
-                j++;
-                i++;
-            }
-            strcpy(PATH[k], new_path);
-            k++;
-            i++;
-        }
-        for (int m=0;m<10;m++)
-            printf(2,"PATH %s \n",PATH[m]);
-        continue;
-    }
+     // add for set PATH command
+     if(buf[0] == 's' && buf[1] == 'e' && buf[2] == 't' && buf[3] == ' ' && buf[4] == 'P' && buf[5] == 'A' && buf[6] == 'T' && buf[7] == 'H'){
+         for (int m=0;m<10;m++) {
+             //PATH[m] = "";
+             memset(PATH[m],0,32);
+         }
+         int i = 9;
+         int k = 0;
+         while (strlen(buf) > i && buf[i] != '\n'){
+             char new_path[32] = "";
+             int j = 0;
+             while(buf[i] != ':' && buf[i] != '\n'){
+                 new_path[j] = buf[i];
+                 j++;
+                 i++;
+             }
+             strcpy(PATH[k], new_path);
+             k++;
+             i++;
+         }
+         for (int m=0;m<10;m++)
+             printf(2,"PATH %s \n",PATH[m]);
+         continue;
+     }
     if(fork1() == 0)
       runcmd(parsecmd(buf));
     wait();
