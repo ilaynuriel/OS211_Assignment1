@@ -89,3 +89,10 @@ sys_uptime(void)
   release(&tickslock);
   return xticks;
 }
+
+// Task 3.2 - getpinfo print a list of currently process
+int
+sys_getpinfo(void)
+{
+    return getpinfo();
+}

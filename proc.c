@@ -532,3 +532,21 @@ procdump(void)
     cprintf("\n");
   }
 }
+
+// Task 3.2 - getpinfo print a list of currently process
+int
+getpinfo(void)
+{
+    struct proc *p;
+    acquire(&ptable.lock);
+    int i = 0;
+    for(p = ptable.proc; p < &ptable.proc[NPROC]; p++) {
+        if (p->state != UNUSED) {
+            cprintf("Row number: %d Process ID: %d\n", i, p->pid);
+            i++;
+        }
+    }
+    release(&ptable.lock);
+    return 0;
+}
+
