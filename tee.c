@@ -22,6 +22,7 @@ void tee(int fd) {
             } else
                 printf(1, "%s", buf);
         }
+        memset(buf, 0, sizeof(buf));
     }
 }
 
@@ -48,13 +49,23 @@ int main(int argc, char *argv[]) {
         exit();
     }
     if (argc == 2) {
-        fd = open(argv[1], O_CREATE | O_WRONLY);
+        if(open(argv[1], 0) < 0)
+            fd = open(argv[1], O_CREATE | O_WRONLY);
+        else {
+            unlink(argv[1]);
+            fd = open(argv[1], O_CREATE | O_WRONLY);
+        }
         tee(fd);
         close(fd);
         exit();
     }
     if (argc == 3) {
-        fd2 = open(argv[2], O_CREATE | O_WRONLY);
+        if(open(argv[2], 0) < 0)
+            fd2 = open(argv[2], O_CREATE | O_WRONLY);
+        else {
+            unlink(argv[2]);
+            fd2 = open(argv[2], O_CREATE | O_WRONLY);
+        }
         if ((fd1 = open(argv[1], 0)) < 0) {
             printf(1, "tee: cannot open %s\n", argv[1]);
             exit();
