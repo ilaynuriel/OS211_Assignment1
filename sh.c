@@ -76,6 +76,7 @@ runcmd(struct cmd *cmd) {
             ecmd = (struct execcmd *) cmd;
             if (ecmd->argv[0] == 0)
                 exit();
+            printf(1, "EXEC: argv[0] = %s, argv[1] = %s\n",ecmd->argv[0],ecmd->argv[1]);
             exec(ecmd->argv[0], ecmd->argv);
             // Check in PATH
             for (int i = 0; i < 10; i++) {
