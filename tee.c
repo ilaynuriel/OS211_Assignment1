@@ -9,6 +9,7 @@
 
 char buf[512];
 
+// Command: tee 1.txt
 void tee(int fd) {
     int n;
     while (1) {
@@ -18,7 +19,7 @@ void tee(int fd) {
             }
             if (write(fd, buf, n) != n) {
                 printf(1, "tee: write error\n");
-                exit();
+                exit(0);
             } else
                 printf(1, "%s", buf);
         }
@@ -26,18 +27,19 @@ void tee(int fd) {
     }
 }
 
+// Command: tee 1.txt 2.txt
 void tee2(int fd1, int fd2) {
     int n;
 
     while ((n = read(fd1, buf, sizeof(buf))) > 0) {
         if (write(fd2, buf, n) != n) {
             printf(1, "tee: write error\n");
-            exit();
+            exit(0);
         }
     }
     if (n < 0) {
         printf(1, "tee: read error\n");
-        exit();
+        exit(0);
     }
 }
 
@@ -46,19 +48,23 @@ int main(int argc, char *argv[]) {
 
     if (argc <= 1) {
         tee(0);
-        exit();
+        exit(0);
     }
+    // Command: tee 1.txt
     if (argc == 2) {
+        // If the file doesn't exist - create it
         if(open(argv[1], 0) < 0)
             fd = open(argv[1], O_CREATE | O_WRONLY);
+        // If the file exist - delete it and create new one
         else {
             unlink(argv[1]);
             fd = open(argv[1], O_CREATE | O_WRONLY);
         }
         tee(fd);
         close(fd);
-        exit();
+        exit(0);
     }
+    // Command: tee 1.txt 2.txt
     if (argc == 3) {
         if(open(argv[2], 0) < 0)
             fd2 = open(argv[2], O_CREATE | O_WRONLY);
@@ -68,11 +74,11 @@ int main(int argc, char *argv[]) {
         }
         if ((fd1 = open(argv[1], 0)) < 0) {
             printf(1, "tee: cannot open %s\n", argv[1]);
-            exit();
+            exit(0);
         }
         tee2(fd1, fd2);
         close(fd1);
         close(fd2);
-        exit();
+        exit(0);
     }
 }

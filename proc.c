@@ -224,8 +224,9 @@ fork(void)
 // Exit the current process.  Does not return.
 // An exited process remains in the zombie state
 // until its parent calls wait() to find out it exited.
+//void exit(void) ORIGINAL exit
 void
-exit(void)
+exit (int status) // Task 4
 {
   struct proc *curproc = myproc();
   struct proc *p;
@@ -261,6 +262,8 @@ exit(void)
     }
   }
 
+  curproc->status = status; // Task 4 - assign status to the current process
+
   // Jump into the scheduler, never to return.
   curproc->state = ZOMBIE;
   sched();
@@ -269,8 +272,9 @@ exit(void)
 
 // Wait for a child process to exit and return its pid.
 // Return -1 if this process has no children.
+// int wait(void) ORIGINAL wait
 int
-wait(void)
+wait(int* status) // Task 4
 {
   struct proc *p;
   int havekids, pid;
@@ -295,6 +299,8 @@ wait(void)
         p->name[0] = 0;
         p->killed = 0;
         p->state = UNUSED;
+        if (p->status != 0) // Task 4 - Check that the chile exit status != NULL
+            *status = p->status;
         release(&ptable.lock);
         return pid;
       }

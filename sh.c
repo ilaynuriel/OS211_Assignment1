@@ -66,7 +66,7 @@ runcmd(struct cmd *cmd) {
     struct redircmd *rcmd;
 
     if (cmd == 0)
-        exit();
+        exit(0);
 
     switch (cmd->type) {
         default:
@@ -75,7 +75,7 @@ runcmd(struct cmd *cmd) {
         case EXEC:
             ecmd = (struct execcmd *) cmd;
             if (ecmd->argv[0] == 0)
-                exit();
+                exit(0);
             exec(ecmd->argv[0], ecmd->argv);
             // Check in PATH
             for (int i = 0; i < 10; i++) {
@@ -109,7 +109,7 @@ runcmd(struct cmd *cmd) {
             close(rcmd->fd);
             if (open(rcmd->file, rcmd->mode) < 0) {
                 printf(2, "open %s failed\n", rcmd->file);
-                exit();
+                exit(0);
             }
             runcmd(rcmd->cmd);
             break;
@@ -118,7 +118,7 @@ runcmd(struct cmd *cmd) {
             lcmd = (struct listcmd *) cmd;
             if (fork1() == 0)
                 runcmd(lcmd->left);
-            wait();
+            wait(0);
             runcmd(lcmd->right);
             break;
 
@@ -142,8 +142,8 @@ runcmd(struct cmd *cmd) {
             }
             close(p[0]);
             close(p[1]);
-            wait();
-            wait();
+            wait(0);
+            wait(0);
             break;
 
         case BACK:
@@ -152,7 +152,7 @@ runcmd(struct cmd *cmd) {
                 runcmd(bcmd->cmd);
             break;
     }
-    exit();
+    exit(0);
 }
 
 int
@@ -214,15 +214,15 @@ main(void) {
         }
         if (fork1() == 0)
             runcmd(parsecmd(buf));
-        wait();
+        wait(0);
     }
-    exit();
+    exit(0);
 }
 
 void
 panic(char *s) {
     printf(2, "%s\n", s);
-    exit();
+    exit(0);
 }
 
 int
